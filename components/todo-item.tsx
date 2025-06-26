@@ -1,6 +1,6 @@
 "use client"
 
-import { Edit, Trash2, Calendar } from "lucide-react"
+import { Edit, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
@@ -15,16 +15,6 @@ interface TodoItemProps {
 }
 
 export function TodoItem({ todo, onToggleComplete, onEdit, onDelete }: TodoItemProps) {
-  const isOverdue = todo.dueDate && new Date(todo.dueDate) < new Date() && !todo.completed
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format(date)
-  }
-
   return (
     <Card className={`transition-opacity ${todo.completed ? "opacity-70" : ""}`}>
       <CardContent className="p-4">
@@ -54,13 +44,6 @@ export function TodoItem({ todo, onToggleComplete, onEdit, onDelete }: TodoItemP
                   {tag}
                 </Badge>
               ))}
-
-              {todo.dueDate && (
-                <Badge variant={isOverdue ? "destructive" : "default"} className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  {formatDate(todo.dueDate)}
-                </Badge>
-              )}
             </div>
           </div>
 

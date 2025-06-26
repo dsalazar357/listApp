@@ -26,7 +26,6 @@ export function TodoForm({ isOpen, onClose, onSubmit, editingTodo }: TodoFormPro
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [category, setCategory] = useState("")
-  const [dueDate, setDueDate] = useState("")
   const [tags, setTags] = useState<string[]>([])
   const [newTag, setNewTag] = useState("")
 
@@ -35,7 +34,6 @@ export function TodoForm({ isOpen, onClose, onSubmit, editingTodo }: TodoFormPro
       setTitle(editingTodo.title)
       setDescription(editingTodo.description || "")
       setCategory(editingTodo.category || "")
-      setDueDate(editingTodo.dueDate ? editingTodo.dueDate.toISOString().split("T")[0] : "")
       setTags(editingTodo.tags || [])
     } else {
       resetForm()
@@ -46,7 +44,6 @@ export function TodoForm({ isOpen, onClose, onSubmit, editingTodo }: TodoFormPro
     setTitle("")
     setDescription("")
     setCategory("")
-    setDueDate("")
     setTags([])
     setNewTag("")
   }
@@ -59,7 +56,6 @@ export function TodoForm({ isOpen, onClose, onSubmit, editingTodo }: TodoFormPro
       title: title.trim(),
       description: description.trim() || undefined,
       category: category || undefined,
-      dueDate: dueDate ? new Date(dueDate) : undefined,
       tags: tags.length > 0 ? tags : undefined,
     })
 
@@ -109,7 +105,7 @@ export function TodoForm({ isOpen, onClose, onSubmit, editingTodo }: TodoFormPro
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe los detalles de la tarea (opcional)"
+              placeholder="Describe los detalles de la tarea. Tip: Incluye una fecha límite o meta específica para mayor claridad (opcional)"
               rows={3}
             />
           </div>
@@ -128,11 +124,6 @@ export function TodoForm({ isOpen, onClose, onSubmit, editingTodo }: TodoFormPro
                 ))}
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="dueDate">Fecha de vencimiento</Label>
-            <Input id="dueDate" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
           </div>
 
           <div className="space-y-2">

@@ -20,7 +20,9 @@ export function TodoFilters({ currentFilter, onFilterChange, todosCount }: TodoF
     { key: "all" as TodoFilter, label: "Todas", count: todosCount.all },
     { key: "pending" as TodoFilter, label: "Pendientes", count: todosCount.pending },
     { key: "completed" as TodoFilter, label: "Completadas", count: todosCount.completed },
-    { key: "archived" as TodoFilter, label: "Archivadas", count: todosCount.archived },
+    ...(todosCount.archived > 0
+      ? [{ key: "archived" as TodoFilter, label: "Archivadas", count: todosCount.archived }]
+      : []),
   ]
 
   return (

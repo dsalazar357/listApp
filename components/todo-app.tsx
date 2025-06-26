@@ -71,10 +71,8 @@ export function TodoApp() {
         return todo.completed
       case "pending":
         return !todo.completed
-      case "overdue":
-        return !todo.completed && todo.dueDate && new Date(todo.dueDate) < new Date()
       case "archived":
-        return !todo.completed && todo.dueDate && new Date(todo.dueDate) < new Date()
+        return false // No archived todos without due dates
       default:
         return true
     }
@@ -107,8 +105,7 @@ export function TodoApp() {
               all: todos.length,
               completed: todos.filter((t) => t.completed).length,
               pending: todos.filter((t) => !t.completed).length,
-              overdue: todos.filter((t) => !t.completed && t.dueDate && new Date(t.dueDate) < new Date()).length,
-              archived: todos.filter((t) => !t.completed && t.dueDate && new Date(t.dueDate) < new Date()).length,
+              archived: 0, // No archived todos without due dates
             }}
           />
 
