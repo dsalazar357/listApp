@@ -1,12 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Moon, Sun } from "lucide-react"
+import { Plus, Moon, Sun, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
 import { TodoList } from "./todo-list"
 import { TodoForm } from "./todo-form"
 import { TodoFilters } from "./todo-filters"
+import { AboutModal } from "./about-modal"
 import { mockTodos } from "@/lib/mock-data"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import type { Todo, TodoFilter } from "@/types/todo"
@@ -14,6 +15,7 @@ import type { Todo, TodoFilter } from "@/types/todo"
 export function TodoApp() {
   const { theme, setTheme } = useTheme()
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isAboutOpen, setIsAboutOpen] = useState(false)
   const [todos, setTodos, isLoaded] = useLocalStorage<Todo[]>("listapp-todos", [])
   const [filter, setFilter] = useState<TodoFilter>("all")
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
@@ -114,6 +116,9 @@ export function TodoApp() {
                 <Plus className="w-4 h-4 mr-2" />
                 Agregar
               </Button>
+              <Button variant="outline" size="icon" onClick={() => setIsAboutOpen(true)}>
+                <Info className="w-4 h-4" />
+              </Button>
               <Button variant="outline" size="icon" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
                 {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
               </Button>
@@ -152,6 +157,8 @@ export function TodoApp() {
             onSubmit={handleFormSubmit}
             editingTodo={editingTodo}
           />
+
+          <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
 
           {todos.length > 0 && (
             <div className="text-center text-xs text-muted-foreground">
