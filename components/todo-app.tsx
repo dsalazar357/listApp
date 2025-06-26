@@ -8,18 +8,22 @@ import { TodoList } from "./todo-list"
 import { TodoForm } from "./todo-form"
 import { TodoFilters } from "./todo-filters"
 import { mockTodos } from "@/lib/mock-data"
+import { useLocalStorage } from "@/hooks/use-local-storage"
 import type { Todo, TodoFilter } from "@/types/todo"
 
 export function TodoApp() {
   const { theme, setTheme } = useTheme()
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [todos, setTodos, isLoaded] = useLocalStorage<Todo[]>("listapp-todos", [])
   const [filter, setFilter] = useState<TodoFilter>("all")
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
 
+  // Cargar datos mock solo si no hay datos en localStorage
   useEffect(() => {
-    setTodos(mockTodos)
-  }, [])
+    if (isLoaded && todos.length === 0) {
+      setTodos(mockTodos)
+    }
+  }, [isLoaded, todos.length, setTodos])
 
   const addTodo = (todoData: Omit<Todo, "id" | "createdAt" | "completed">) => {
     const newTodo: Todo = {
@@ -65,6 +69,12 @@ export function TodoApp() {
     setIsFormOpen(false)
   }
 
+  const clearAllTodos = () => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar todas las tareas?")) {
+      setTodos([])
+    }
+  }
+
   const filteredTodos = todos.filter((todo) => {
     switch (filter) {
       case "completed":
@@ -77,6 +87,18 @@ export function TodoApp() {
         return true
     }
   })
+
+  // Mostrar loading mientras se cargan los datos
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-purple-600 mb-2">ListApp</h1>
+          <p className="text-muted-foreground">Cargando tus tareas...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,16 +120,29 @@ export function TodoApp() {
             </div>
           </div>
 
-          <TodoFilters
-            currentFilter={filter}
-            onFilterChange={setFilter}
-            todosCount={{
-              all: todos.length,
-              completed: todos.filter((t) => t.completed).length,
-              pending: todos.filter((t) => !t.completed).length,
-              archived: 0, // No archived todos without due dates
-            }}
-          />
+          <div className="flex justify-between items-center">
+            <TodoFilters
+              currentFilter={filter}
+              onFilterChange={setFilter}
+              todosCount={{
+                all: todos.length,
+                completed: todos.filter((t) => t.completed).length,
+                pending: todos.filter((t) => !t.completed).length,
+                archived: 0, // No archived todos without due dates
+              }}
+            />
+
+            {todos.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearAllTodos}
+                className="text-red-600 hover:text-red-700 bg-transparent"
+              >
+                Limpiar todo
+              </Button>
+            )}
+          </div>
 
           <TodoList todos={filteredTodos} onToggleComplete={toggleComplete} onEdit={handleEdit} onDelete={deleteTodo} />
 
@@ -117,6 +152,12 @@ export function TodoApp() {
             onSubmit={handleFormSubmit}
             editingTodo={editingTodo}
           />
+
+          {todos.length > 0 && (
+            <div className="text-center text-xs text-muted-foreground">
+              Tus tareas se guardan automáticamente en tu navegador
+            </div>
+          )}
         </div>
       </div>
     </div>
